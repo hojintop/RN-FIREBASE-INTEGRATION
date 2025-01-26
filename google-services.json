@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "265991067525",
+    "project_id": "testproject-rn-5b853",
+    "storage_bucket": "testproject-rn-5b853.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265991067525:android:62467ce90774390b7616ec",
+        "android_client_info": {
+          "package_name": "com.genius.m.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "265991067525-l1mp0sghb5snl8p37n17oj8hq53gbq50.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7rMog41MAzQlUPQzg-yM0ianb0MY7Mg4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "265991067525-l1mp0sghb5snl8p37n17oj8hq53gbq50.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "265991067525-k0oeapg57kjnv5rcvh0dcff417r1er10.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.genius.m.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
