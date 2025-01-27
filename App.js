@@ -1,88 +1,39 @@
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-  isSuccessResponse,
-  statusCodes,
-} from "@react-native-google-signin/google-signin";
-import firebaseAuth from "@react-native-firebase/auth";
-
-import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
-import { useEffect, useState } from "react";
-
-GoogleSignin.configure();
+import { Button, Image, Platform, StyleSheet, View } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import storage from "@react-native-firebase/storage"
+import { useState } from "react";
 
 export default function App() {
-  const [userInfo, setUserInfo] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [imageInfo, setImageInfo] = useState(null);
 
-  async function onPressGoogleSignin() {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const response = await GoogleSignin.signIn();
+  async function onPressPickFile(){
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    })
 
-      console.log("response", response);
+    // console.log(result);
+    // 이미지 선택시
+    if (!result.canceled) {
+      const image = result.assets[0];
+      setImageInfo(image);
 
-      const credential = firebaseAuth.GoogleAuthProvider.credential(
-        response.data.idToken
-      );
-      const result = await firebaseAuth().signInWithCredential(credential);
+      const uri = image.uri;
+      const fileNameArray = uri.split('/');
+      const fileName = fileNameArray[fileNameArray.length - 1];
+      const file = Platform.OS === "ios" ? uri.replace("file://","") : uri;
 
-      setUserInfo({
-        userName: result.additionalUserInfo.profile.name,
-        userImage: result.additionalUserInfo.profile.picture,
-      });
-    } catch (ex) {}
-  }
+      const reference = await storage().ref(fileName).putFile(file);
 
-  async function getCurrentUserInfo() {
-    
-    try {
-      setIsLoading(true);
-      const response = await GoogleSignin.signInSilently();
-  
-      if (isSuccessResponse(response)) {
-        
-        const credential = firebaseAuth.GoogleAuthProvider.credential(
-          response.data.idToken
-        );
-        const result = await firebaseAuth().signInWithCredential(credential);
-
-        setUserInfo({
-          userName: result.additionalUserInfo.profile.name,
-          userImage: result.additionalUserInfo.profile.picture,
-        });
-        
-      } else if (isNoSavedCredentialFoundResponse(response)) {
-        // user has not signed in yet, or they have revoked access
-        // 구글로그인 필요 TO-DO 작성
-      }
-      setIsLoading(false);
-    } catch (error) {
-      // handle errror
     }
   }
 
-  useEffect(() => {
-    getCurrentUserInfo();
-  }, []);
-
   return (
     <View style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : userInfo !== null ? (
-        <View>
-          <Image
-            style={{ width: 100, height: 100 , borderRadius: 50}}
-            source={{ uri: userInfo.userImage }}
-          ></Image>
-          <Text style={{ fontSize: 24, marginTop: 10 }}>
-            {userInfo.userName}
-          </Text>
-        </View>
-      ) : (
-        <GoogleSigninButton onPress={onPressGoogleSignin} />
-      )}
+      {imageInfo !== null ? (<Image source={{uri:imageInfo.uri}} style={{width:150, height:150,}}></Image>) : (<></>)}
+      <Button title="PICK FILE" onPress={onPressPickFile}></Button>
     </View>
   );
 }
